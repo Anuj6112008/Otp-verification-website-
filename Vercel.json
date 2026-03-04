@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/send",
+      "destination": "https://otp-numberveri-corr.vercel.app/send"
+    },
+    {
+      "source": "/api/verify",
+      "destination": "https://otp-numberveri-corr.vercel.app/verify"
+    }
+  ]
+}
