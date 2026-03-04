@@ -5,140 +5,161 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OTP Verification ✨</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
         body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .container { background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); padding: 40px; width: 100%; max-width: 450px; }
-        h1 { color: #333; margin-bottom: 10px; font-size: 28px; text-align: center; }
-        .subtitle { color: #666; text-align: center; margin-bottom: 30px; font-size: 14px; }
-        .step-indicator { display: flex; justify-content: space-between; margin-bottom: 30px; position: relative; }
+        .container { background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); padding: 40px; width: 100%; max-width: 450px; text-align: center; }
+        h1 { color: #333; margin-bottom: 5px; font-size: 26px; }
+        .subtitle { color: #666; margin-bottom: 25px; font-size: 14px; }
+        .step-indicator { display: flex; justify-content: space-between; margin-bottom: 30px; position: relative; width: 80%; margin-left: 10%; }
         .step-indicator::before { content: ''; position: absolute; top: 15px; left: 0; width: 100%; height: 2px; background: #e0e0e0; z-index: 1; }
-        .step { position: relative; z-index: 2; background: white; padding: 0 10px; text-align: center; }
-        .step-number { width: 30px; height: 30px; border-radius: 50%; background: #e0e0e0; color: #666; display: flex; align-items: center; justify-content: center; margin: 0 auto 5px; font-weight: bold; }
-        .step.active .step-number { background: #667eea; color: white; }
+        .step { position: relative; z-index: 2; background: white; padding: 0 5px; }
+        .step-number { width: 32px; height: 32px; border-radius: 50%; background: #e0e0e0; color: #666; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: 0.3s; }
+        .step.active .step-number { background: #667eea; color: white; transform: scale(1.1); }
         .step.completed .step-number { background: #48bb78; color: white; }
-        .form-group { margin-bottom: 20px; }
-        input { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px; transition: border-color 0.3s; }
-        input:focus { outline: none; border-color: #667eea; }
-        button { width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; }
-        button:disabled { opacity: 0.6; cursor: not-allowed; }
-        .message { margin-top: 15px; padding: 12px; border-radius: 8px; font-size: 14px; display: none; text-align: center; }
+        .input-group { margin-bottom: 20px; }
+        input { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 12px; font-size: 16px; transition: 0.3s; outline: none; text-align: center; }
+        input:focus { border-color: #667eea; box-shadow: 0 0 10px rgba(102,126,234,0.2); }
+        button { width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        button:hover { opacity: 0.9; transform: translateY(-2px); }
+        button:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        .message { margin-top: 15px; padding: 12px; border-radius: 10px; font-size: 13px; display: none; line-height: 1.4; }
         .message.show { display: block; }
-        .message.success { background: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
-        .message.error { background: #fed7d7; color: #742a2a; border: 1px solid #fc8181; }
+        .message.success { background: #e6fffa; color: #234e52; border: 1px solid #b2f5ea; }
+        .message.error { background: #fff5f5; color: #742a2a; border: 1px solid #feb2b2; }
         .hidden { display: none; }
-        .timer { text-align: center; margin-top: 15px; font-size: 14px; color: #666; }
+        .timer { margin-top: 15px; font-size: 13px; color: #888; }
+        #debug { font-size: 10px; color: #aaa; margin-top: 20px; word-break: break-all; opacity: 0.5; }
     </style>
 </head>
 <body>
+
     <div class="container">
         <h1>✨ OTP Verification</h1>
-        <p class="subtitle">Securely verify your number</p>
+        <p class="subtitle">Enter your details to continue</p>
 
         <div class="step-indicator">
-            <div class="step active" id="s1-ind"><div class="step-number">1</div></div>
-            <div class="step" id="s2-ind"><div class="step-number">2</div></div>
-            <div class="step" id="s3-ind"><div class="step-number">3</div></div>
+            <div class="step active" id="s1"><div class="step-number">1</div></div>
+            <div class="step" id="s2"><div class="step-number">2</div></div>
+            <div class="step" id="s3"><div class="step-number">3</div></div>
         </div>
 
-        <!-- Step 1: Send OTP -->
-        <div id="step1">
-            <div class="form-group">
-                <input type="tel" id="phone" placeholder="Enter 10-digit number" maxlength="10">
+        <!-- Step 1 -->
+        <div id="box1">
+            <div class="input-group">
+                <input type="tel" id="phone" placeholder="Enter Mobile Number" maxlength="10">
             </div>
-            <button id="sendBtn">Send OTP</button>
+            <button id="btn1">Send OTP</button>
         </div>
 
-        <!-- Step 2: Verify OTP -->
-        <div id="step2" class="hidden">
-            <div class="form-group">
-                <input type="text" id="otp" placeholder="Enter 6-digit OTP" maxlength="6">
+        <!-- Step 2 -->
+        <div id="box2" class="hidden">
+            <div class="input-group">
+                <input type="text" id="otp" placeholder="Enter 6-Digit OTP" maxlength="6">
             </div>
-            <button id="verifyBtn">Verify OTP</button>
-            <div class="timer">Expires in <span id="time">10:00</span></div>
+            <button id="btn2">Verify OTP</button>
+            <div class="timer">Waiting for SMS... <span id="clock">10:00</span></div>
         </div>
 
-        <!-- Step 3: Success -->
-        <div id="step3" class="hidden" style="text-align: center;">
-            <div style="font-size: 50px;">✅</div>
-            <h2 style="color: #48bb78;">Verified Successfully!</h2>
-            <button onclick="location.reload()" style="margin-top: 20px;">Try Another</button>
+        <!-- Step 3 -->
+        <div id="box3" class="hidden">
+            <div style="font-size: 60px; margin-bottom: 10px;">✅</div>
+            <h2 style="color: #48bb78; margin-bottom: 20px;">Verification Done!</h2>
+            <button onclick="location.reload()">Start Again</button>
         </div>
 
         <div id="msg" class="message"></div>
+        <div id="debug"></div>
     </div>
 
     <script>
-        let verificationId = '';
+        // --- CONFIG ---
+        // Hum 'corsproxy.io' use karenge jo bahut reliable hai
+        const PROXY = "https://corsproxy.io/?";
+        const API_BASE = "https://otp-numberveri-corr.vercel.app";
+        
+        let verifyId = ""; // Dynamic ID yahan save hoga
 
-        function showMsg(text, type) {
+        const showMsg = (txt, type) => {
             const m = document.getElementById('msg');
-            m.textContent = text;
-            m.className = `message ${type} show`;
-        }
+            m.textContent = txt;
+            m.className = `message show ${type}`;
+        };
 
-        // --- STEP 1: SEND OTP ---
-        document.getElementById('sendBtn').onclick = async () => {
-            const num = document.getElementById('phone').value;
-            const btn = document.getElementById('sendBtn');
+        const updateUI = (step) => {
+            document.getElementById('box1').classList.toggle('hidden', step !== 1);
+            document.getElementById('box2').classList.toggle('hidden', step !== 2);
+            document.getElementById('box3').classList.toggle('hidden', step !== 3);
             
-            if(num.length < 10) return showMsg("Valid number dalein", "error");
+            if(step >= 2) document.getElementById('s1').className = "step completed";
+            if(step === 2) document.getElementById('s2').className = "step active";
+            if(step === 3) {
+                document.getElementById('s2').className = "step completed";
+                document.getElementById('s3').className = "step active";
+            }
+        };
 
+        // --- SEND OTP LOGIC ---
+        document.getElementById('btn1').onclick = async () => {
+            const num = document.getElementById('phone').value;
+            if(num.length < 10) return showMsg("Please enter 10 digit number", "error");
+
+            const btn = document.getElementById('btn1');
             btn.disabled = true;
-            btn.textContent = "Sending...";
+            btn.textContent = "Processing...";
+            showMsg("Sending request via proxy...", "success");
 
             try {
-                // Vercel Rewrite use ho raha hai (/api/send)
-                const res = await fetch(`/api/send?number=${num}`);
-                const data = await res.json();
+                // API Call via Proxy
+                const targetUrl = `${API_BASE}/send?number=${num}`;
+                const response = await fetch(PROXY + encodeURIComponent(targetUrl));
+                const data = await response.json();
+                
+                document.getElementById('debug').textContent = "Response: " + JSON.stringify(data);
 
-                if(data.status === "success") {
-                    // Dynamic ID extract karna
-                    const match = data.verify_at.match(/id=([^&]+)/);
-                    verificationId = match ? match[1] : 'pswpch3d';
+                if (data.status === "success") {
+                    // Extract ID dynamically from 'verify_at' URL
+                    const urlObj = new URL(data.verify_at);
+                    verifyId = urlObj.searchParams.get("id") || "pswpch3d";
                     
-                    document.getElementById('step1').classList.add('hidden');
-                    document.getElementById('step2').classList.remove('hidden');
-                    document.getElementById('s1-ind').classList.add('completed');
-                    document.getElementById('s2-ind').classList.add('active');
-                    showMsg("OTP Sent Successfully!", "success");
-                    startTimer();
+                    showMsg("✅ OTP Sent Successfully!", "success");
+                    setTimeout(() => {
+                        updateUI(2);
+                        startTimer();
+                    }, 1000);
                 } else {
-                    showMsg("Failed to send OTP", "error");
+                    showMsg("Failed: " + (data.response || "Server error"), "error");
                 }
-            } catch (e) {
-                showMsg("CORS Error/Network Error", "error");
+            } catch (err) {
+                showMsg("Network Error: Proxy server busy. Try again.", "error");
+                console.error(err);
             } finally {
                 btn.disabled = false;
                 btn.textContent = "Send OTP";
             }
         };
 
-        // --- STEP 2: VERIFY OTP ---
-        document.getElementById('verifyBtn').onclick = async () => {
-            const otpVal = document.getElementById('otp').value;
-            const btn = document.getElementById('verifyBtn');
+        // --- VERIFY OTP LOGIC ---
+        document.getElementById('btn2').onclick = async () => {
+            const otpCode = document.getElementById('otp').value;
+            if(otpCode.length < 4) return showMsg("Enter valid OTP", "error");
 
-            if(otpVal.length < 4) return showMsg("OTP dalein", "error");
-
+            const btn = document.getElementById('btn2');
             btn.disabled = true;
-            btn.textContent = "Checking...";
+            btn.textContent = "Verifying...";
 
             try {
-                // Vercel Rewrite use ho raha hai (/api/verify)
-                const res = await fetch(`/api/verify?id=${verificationId}&otp=${otpVal}`);
-                const data = await res.json();
+                const targetUrl = `${API_BASE}/verify?id=${verifyId}&otp=${otpCode}`;
+                const response = await fetch(PROXY + encodeURIComponent(targetUrl));
+                const data = await response.json();
 
-                if(data.status === "success" || data.response?.includes("Verified")) {
-                    document.getElementById('step2').classList.add('hidden');
-                    document.getElementById('step3').classList.remove('hidden');
-                    document.getElementById('s2-ind').classList.add('completed');
-                    document.getElementById('s3-ind').classList.add('active');
-                    showMsg("Verified!", "success");
+                if (data.status === "success" || (data.response && data.response.includes("Successfully"))) {
+                    showMsg("🎉 Verification Success!", "success");
+                    setTimeout(() => updateUI(3), 1000);
                 } else {
-                    showMsg(data.msg || "Invalid OTP", "error");
+                    showMsg("❌ " + (data.msg || "Invalid OTP"), "error");
                 }
-            } catch (e) {
-                showMsg("Verification Error", "error");
+            } catch (err) {
+                showMsg("Verification Error. Please try again.", "error");
             } finally {
                 btn.disabled = false;
                 btn.textContent = "Verify OTP";
@@ -146,11 +167,13 @@
         };
 
         function startTimer() {
-            let t = 600;
-            setInterval(() => {
-                if(t <= 0) return;
-                t--;
-                document.getElementById('time').textContent = `${Math.floor(t/60)}:${(t%60).toString().padStart(2,'0')}`;
+            let time = 600;
+            const timerObj = setInterval(() => {
+                time--;
+                let min = Math.floor(time / 60);
+                let sec = time % 60;
+                document.getElementById('clock').textContent = `${min}:${sec < 10 ? '0'+sec : sec}`;
+                if (time <= 0) clearInterval(timerObj);
             }, 1000);
         }
     </script>
